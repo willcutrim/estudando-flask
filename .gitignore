@@ -1,2 +1,3 @@
-.__pycach__/
-.estudos_flask_venv/
+estudo_flask_venv/
+*.pyc
+__pycache__/
