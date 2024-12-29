@@ -3,7 +3,9 @@ from werkzeug.exceptions import BadRequest
 from flask import request, jsonify
 from flask.views import MethodView
 
-from services.user_service import list_users, create_user, get_user, update_user
+from services.user_service import (
+    list_users, create_user, get_user, update_user, delete_user
+)
 
 
 class AllUsers(MethodView):
@@ -55,5 +57,18 @@ class UpdateUser(MethodView):
         except BadRequest as e:
             return jsonify({"error": str(e)}), 400
 
+        except Exception as e:
+            return jsonify({"error": "Erro interno do servidor"}), 500
+        
+
+class DeleteUser(MethodView):
+    def delete(self, user_id):
+        try:
+            user = delete_user(user_id)
+            if user is None:
+                return jsonify({"error": "Usuário não encontrado"}), 404
+            
+            return jsonify({'message': 'Usuário deletado'}), 200
+        
         except Exception as e:
             return jsonify({"error": "Erro interno do servidor"}), 500

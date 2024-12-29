@@ -1,7 +1,6 @@
-from flask import make_response, jsonify
 from werkzeug.exceptions import BadRequest
 from models.user import User
-from utils.validations import validate_email
+from utils.validations import email_duplicate, validate_email
 
 db = []
 
@@ -17,6 +16,9 @@ def create_user(data):
     
     if validate_email(data['email']):
         raise BadRequest("O campo 'email' é inválido")
+    
+    if email_duplicate(data['email'], db):
+        raise BadRequest("O email já está cadastrado")
     
     new_user = User(id=len(db) + 1, name=data['name'], email=data['email'])
     db.append(new_user)
@@ -43,4 +45,12 @@ def update_user(user_id, data):
         
         user.email = data['email']
     
+    return user
+
+def delete_user(user_id):
+    user = get_user(user_id)
+    if not user:
+        return None
+
+    db.remove(user)
     return user
