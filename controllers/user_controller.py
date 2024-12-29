@@ -3,6 +3,7 @@ from werkzeug.exceptions import BadRequest
 from flask import request, jsonify
 from flask.views import MethodView
 
+from messages.choices_messages import ERRO_INTERNO
 from services.user_service import (
     list_users, create_user, get_user, update_user, delete_user
 )
@@ -11,7 +12,7 @@ from services.user_service import (
 class AllUsers(MethodView):
     def get(self):
         users = list_users()
-        return jsonify([user.to_dict() for user in users]), 200 if users else 204
+        return jsonify([user.to_dict() for user in users]) or [], 200 if users else 204
 
 
 class CreateUser(MethodView):
@@ -28,7 +29,7 @@ class CreateUser(MethodView):
             return jsonify({"error": str(e)}), 400
 
         except Exception as e:
-            return jsonify({"error": "Erro interno do servidor"}), 500
+            return jsonify({"error": ERRO_INTERNO}), 500
 
 
 class GetUser(MethodView):
@@ -58,7 +59,7 @@ class UpdateUser(MethodView):
             return jsonify({"error": str(e)}), 400
 
         except Exception as e:
-            return jsonify({"error": "Erro interno do servidor"}), 500
+            return jsonify({"error": ERRO_INTERNO}), 500
         
 
 class DeleteUser(MethodView):
@@ -70,5 +71,8 @@ class DeleteUser(MethodView):
             
             return jsonify({'message': 'Usuário deletado'}), 200
         
+        except BadRequest as e:
+            return jsonify({"error": str(e)}), 400
+        
         except Exception as e:
-            return jsonify({"error": "Erro interno do servidor"}), 500
+            return jsonify({"error": ERRO_INTERNO}), 500

@@ -1,35 +1,30 @@
 from werkzeug.exceptions import BadRequest
+
+from messages.choices_messages import CAMPOS_OBRIGATORIOS, EMAIL_INVALIDO, EMAIL_DUPLICADO
 from models.user import User
 from utils.validations import email_duplicate, validate_email
 
 DB = []
 
 def list_users():
-    if not DB:
-        return []
-    
     return DB
 
 def create_user(data):
     if 'name' not in data or 'email' not in data:
-        raise BadRequest("Os campos 'name' e 'email' são obrigatórios")
+        raise BadRequest(CAMPOS_OBRIGATORIOS)
     
     if validate_email(data['email']):
-        raise BadRequest("O campo 'email' é inválido")
+        raise BadRequest(EMAIL_INVALIDO)
     
     if email_duplicate(data['email'], DB):
-        raise BadRequest("O email já está cadastrado")
+        raise BadRequest(EMAIL_DUPLICADO)
     
     new_user = User(id=len(DB) + 1, name=data['name'], email=data['email'])
     DB.append(new_user)
     return new_user
 
 def get_user(user_id):
-    user = next((user for user in DB if user.id == user_id), None)
-    if not user:
-        return None
-    
-    return user
+    return next((user for user in DB if user.id == user_id), None)
 
 def update_user(user_id, data):
     user = get_user(user_id)
@@ -41,10 +36,10 @@ def update_user(user_id, data):
     
     if 'email' in data:
         if validate_email(data['email']):
-            raise BadRequest("O campo 'email' é inválido")
+            raise BadRequest(EMAIL_INVALIDO)
         
         if email_duplicate(data['email'], DB):
-            raise BadRequest("O email já está cadastrado")
+            raise BadRequest(EMAIL_DUPLICADO)
         
         user.email = data['email']
     
