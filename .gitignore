@@ -1,3 +1,4 @@
 estudo_flask_venv/
 *.pyc
 __pycache__/
+launch.json/
