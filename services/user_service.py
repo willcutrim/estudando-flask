@@ -2,13 +2,13 @@ from werkzeug.exceptions import BadRequest
 from models.user import User
 from utils.validations import email_duplicate, validate_email
 
-db = []
+DB = []
 
 def list_users():
-    if not db:
+    if not DB:
         return []
     
-    return db
+    return DB
 
 def create_user(data):
     if 'name' not in data or 'email' not in data:
@@ -17,15 +17,15 @@ def create_user(data):
     if validate_email(data['email']):
         raise BadRequest("O campo 'email' é inválido")
     
-    if email_duplicate(data['email'], db):
+    if email_duplicate(data['email'], DB):
         raise BadRequest("O email já está cadastrado")
     
-    new_user = User(id=len(db) + 1, name=data['name'], email=data['email'])
-    db.append(new_user)
+    new_user = User(id=len(DB) + 1, name=data['name'], email=data['email'])
+    DB.append(new_user)
     return new_user
 
 def get_user(user_id):
-    user = next((user for user in db if user.id == user_id), None)
+    user = next((user for user in DB if user.id == user_id), None)
     if not user:
         return None
     
@@ -43,6 +43,9 @@ def update_user(user_id, data):
         if validate_email(data['email']):
             raise BadRequest("O campo 'email' é inválido")
         
+        if email_duplicate(data['email'], DB):
+            raise BadRequest("O email já está cadastrado")
+        
         user.email = data['email']
     
     return user
@@ -52,5 +55,5 @@ def delete_user(user_id):
     if not user:
         return None
 
-    db.remove(user)
+    DB.remove(user)
     return user
