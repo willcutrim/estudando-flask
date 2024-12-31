@@ -70,7 +70,7 @@ def delete_user(user_id):
         if not user:
             raise BadRequest("Usuário não encontrado")
         
-        db.session.delete(user)
+        user.is_active = False
         db.session.commit()
     except Exception as e:
         raise BadRequest(f"Erro ao deletar usuário: {e}")
@@ -82,3 +82,13 @@ def test_db():
         return "Conexão com o banco de dados funcionando!"
     except Exception as e:
         return f"Erro ao conectar ao banco de dados: {e}"
+
+def reativar_user(user_id):
+    try:
+        user = get_user(user_id)
+        
+        user.is_active = True
+        db.session.commit()
+        return user
+    except Exception as e:
+        raise BadRequest(f"Erro ao reativar usuário: {e}")

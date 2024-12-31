@@ -5,7 +5,8 @@ from flask.views import MethodView
 
 from messages.choices_messages import ERRO_INTERNO
 from services.user_service import (
-    list_users, create_user, get_user, test_db, update_user, delete_user
+    list_users, create_user, get_user, test_db, update_user, delete_user,
+    reativar_user
 )
 
 
@@ -48,3 +49,11 @@ class TestDb(MethodView):
     def get(self):
         result = test_db()
         return jsonify({"message": result}), 200
+    
+class ReativarUser(MethodView):
+    def put(self, user_id):
+        user = reativar_user(user_id)
+        return jsonify({
+            "message": "Usuário reativado com sucesso",
+            "user": user.to_dict()
+        }), 200
