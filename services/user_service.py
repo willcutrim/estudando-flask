@@ -38,6 +38,7 @@ def get_user(user_id):
         if not user:
             raise BadRequest("Usuário não encontrado")
         return user
+    
     except Exception as e:
         raise BadRequest(f"Erro ao obter usuário: {e}")
 
@@ -61,6 +62,7 @@ def update_user(user_id, data):
         
         db.session.commit()
         return user
+    
     except Exception as e:
         raise BadRequest(f"Erro ao atualizar usuário: {e}")
 
@@ -72,6 +74,7 @@ def delete_user(user_id):
         
         user.is_active = False
         db.session.commit()
+
     except Exception as e:
         raise BadRequest(f"Erro ao deletar usuário: {e}")
 
@@ -90,5 +93,6 @@ def reativar_user(user_id):
         user.is_active = True
         db.session.commit()
         return user
+    
     except Exception as e:
         raise BadRequest(f"Erro ao reativar usuário: {e}")

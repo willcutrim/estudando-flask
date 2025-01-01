@@ -1,6 +1,7 @@
 from config.database import db
+from mixins.serializer_mixin import SerializeMixin
 
-class User(db.Model):
+class User(db.Model, SerializeMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -21,15 +22,6 @@ class User(db.Model):
             db.session.commit()
         
         return True
-    
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'username': self.username,
-            'email': self.email,
-            'created_at': self.created_at,
-            'is_active': self.is_active
-        }
 
     def __repr__(self):
         return f"<User {self.username}>"
