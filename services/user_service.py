@@ -1,8 +1,9 @@
 from datetime import datetime
+from flask import jsonify
 from werkzeug.exceptions import BadRequest
 
 from messages.choices_messages import CAMPOS_OBRIGATORIOS, EMAIL_INVALIDO, EMAIL_DUPLICADO
-from models.user import User
+from models.user import User, Address
 from utils.validations import email_duplicate, validate_email
 from config.database import db
 from sqlalchemy.sql import text
@@ -10,7 +11,7 @@ from sqlalchemy.sql import text
 def list_users():
     try:
         users = User.query.all()
-        return users
+        return [user.to_dict() for user in users]
     except Exception as e:
         raise BadRequest(f"Erro ao listar usuários: {e}")
 
@@ -28,7 +29,21 @@ def create_user(data):
         new_user = User(username=data['username'], email=data['email'], created_at=datetime.now())
         db.session.add(new_user)
         db.session.commit()
+
+        if 'address' in data:
+            address_data = data['address']
+            new_address = Address(
+                user_id=new_user.id,
+                address=address_data['address'],
+                city=address_data['city'],
+                state=address_data['state'],
+                country=address_data['country']
+            )
+            db.session.add(new_address)
+            db.session.commit()
+
         return new_user
+
     except Exception as e:
         raise BadRequest(f"Erro ao criar usuário: {e}")
 
@@ -37,6 +52,7 @@ def get_user(user_id):
         user = User.query.get(user_id)
         if not user:
             raise BadRequest("Usuário não encontrado")
+
         return user
     
     except Exception as e:

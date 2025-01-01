@@ -13,7 +13,7 @@ from services.user_service import (
 class AllUsers(MethodView):
     def get(self):
         users = list_users()
-        return jsonify([user.to_dict() for user in users]) or [], 200 if users else 204
+        return jsonify(users), 200 if users else 204
 
 
 class CreateUser(MethodView):
