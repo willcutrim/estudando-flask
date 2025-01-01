@@ -18,7 +18,7 @@ Certifique-se de ter o seguinte instalado:
 
 ```bash
 git clone https://github.com/willcutrim/estudando-flask.git
-cd nome-do-repositorio
+cd estudando-flask
 ```
 
 ---
