@@ -16,7 +16,7 @@ class UserService:
         except Exception as e:
             raise BadRequest(f"Erro ao listar usuários: {e}")
 
-    def create_user(self, data):
+    def     create_user(self, data):
         try:
             if 'username' not in data or 'email' not in data:
                 raise BadRequest(CAMPOS_OBRIGATORIOS)
