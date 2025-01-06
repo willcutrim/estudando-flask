@@ -10,13 +10,13 @@ from services.user_service import (
 )
 
 
-class AllUsers(MethodView):
+class AllUsersView(MethodView):
     def get(self):
         users = list_users()
         return jsonify(users), 200 if users else 204
 
 
-class CreateUser(MethodView):
+class CreateUserView(MethodView):
     def post(self):
         user_data = request.get_json()
         if not user_data:
@@ -26,31 +26,31 @@ class CreateUser(MethodView):
         return jsonify(new_user.to_dict()), 201
 
 
-class GetUser(MethodView):
+class GetUserView(MethodView):
     def get(self, user_id):
         user = get_user(user_id)
         return jsonify(user.to_dict()), 200
 
 
-class UpdateUser(MethodView):
+class UpdateUserView(MethodView):
     def put(self, user_id):
         user_data = request.get_json()
         updated_user = update_user(user_id, user_data)
         return jsonify(updated_user.to_dict()), 200
 
 
-class DeleteUser(MethodView):
+class DeleteUserView(MethodView):
     def delete(self, user_id):
         delete_user(user_id)
         return jsonify({"message": "Usuário deletado"}), 200
 
 
-class TestDb(MethodView):
+class TestDbView(MethodView):
     def get(self):
         result = test_db()
         return jsonify({"message": result}), 200
     
-class ReativarUser(MethodView):
+class ReativarUserView(MethodView):
     def put(self, user_id):
         user = reativar_user(user_id)
         return jsonify({
