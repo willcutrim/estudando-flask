@@ -8,107 +8,108 @@ from utils.validations import email_duplicate, validate_email
 from config.database import db
 from sqlalchemy.sql import text
 
-def list_users():
-    try:
-        users = User.query.all()
-        return [user.to_dict() for user in users]
-    except Exception as e:
-        raise BadRequest(f"Erro ao listar usuários: {e}")
+class UserService:
+    def list_users(self):
+        try:
+            users = User.query.all()
+            return [user.to_dict() for user in users]
+        except Exception as e:
+            raise BadRequest(f"Erro ao listar usuários: {e}")
 
-def create_user(data):
-    try:
-        if 'username' not in data or 'email' not in data:
-            raise BadRequest(CAMPOS_OBRIGATORIOS)
-        
-        if validate_email(data['email']):
-            raise BadRequest(EMAIL_INVALIDO)
-        
-        if email_duplicate(data['email'], User.query.all()):
-            raise BadRequest(EMAIL_DUPLICADO)
-        
-        new_user = User(username=data['username'], email=data['email'], created_at=datetime.now())
-        db.session.add(new_user)
-        db.session.commit()
-
-        if 'address' in data:
-            address_data = data['address']
-            new_address = Address(
-                user_id=new_user.id,
-                address=address_data['address'],
-                city=address_data['city'],
-                state=address_data['state'],
-                country=address_data['country']
-            )
-            db.session.add(new_address)
-            db.session.commit()
-
-        return new_user
-
-    except Exception as e:
-        raise BadRequest(f"Erro ao criar usuário: {e}")
-
-def get_user(user_id):
-    try:
-        user = User.query.get(user_id)
-        if not user:
-            raise BadRequest("Usuário não encontrado")
-
-        return user
-    
-    except Exception as e:
-        raise BadRequest(f"Erro ao obter usuário: {e}")
-
-def update_user(user_id, data):
-    try:
-        user = User.query.get(user_id)
-        if not user:
-            raise BadRequest("Usuário não encontrado")
-        
-        if 'username' in data:
-            user.username = data['username']
-
-        if 'email' in data:
+    def create_user(self, data):
+        try:
+            if 'username' not in data or 'email' not in data:
+                raise BadRequest(CAMPOS_OBRIGATORIOS)
+            
             if validate_email(data['email']):
                 raise BadRequest(EMAIL_INVALIDO)
             
             if email_duplicate(data['email'], User.query.all()):
                 raise BadRequest(EMAIL_DUPLICADO)
             
-            user.email = data['email']
+            new_user = User(username=data['username'], email=data['email'], created_at=datetime.now())
+            db.session.add(new_user)
+            db.session.commit()
+
+            if 'address' in data:
+                address_data = data['address']
+                new_address = Address(
+                    user_id=new_user.id,
+                    address=address_data['address'],
+                    city=address_data['city'],
+                    state=address_data['state'],
+                    country=address_data['country']
+                )
+                db.session.add(new_address)
+                db.session.commit()
+
+            return new_user
+
+        except Exception as e:
+            raise BadRequest(f"Erro ao criar usuário: {e}")
+
+    def get_user(self, user_id):
+        try:
+            user = User.query.get(user_id)
+            if not user:
+                raise BadRequest("Usuário não encontrado")
+
+            return user
         
-        db.session.commit()
-        return user
-    
-    except Exception as e:
-        raise BadRequest(f"Erro ao atualizar usuário: {e}")
+        except Exception as e:
+            raise BadRequest(f"Erro ao obter usuário: {e}")
 
-def delete_user(user_id):
-    try:
-        user = User.query.get(user_id)
-        if not user:
-            raise BadRequest("Usuário não encontrado")
+    def update_user(self, user_id, data):
+        try:
+            user = User.query.get(user_id)
+            if not user:
+                raise BadRequest("Usuário não encontrado")
+            
+            if 'username' in data:
+                user.username = data['username']
+
+            if 'email' in data:
+                if validate_email(data['email']):
+                    raise BadRequest(EMAIL_INVALIDO)
+                
+                if email_duplicate(data['email'], User.query.all()):
+                    raise BadRequest(EMAIL_DUPLICADO)
+                
+                user.email = data['email']
+            
+            db.session.commit()
+            return user
         
-        user.is_active = False
-        db.session.commit()
+        except Exception as e:
+            raise BadRequest(f"Erro ao atualizar usuário: {e}")
 
-    except Exception as e:
-        raise BadRequest(f"Erro ao deletar usuário: {e}")
+    def delete_user(self, user_id):
+        try:
+            user = User.query.get(user_id)
+            if not user:
+                raise BadRequest("Usuário não encontrado")
+            
+            user.is_active = False
+            db.session.commit()
 
-def test_db():
-    try:
-        with db.engine.connect() as connection:
-            connection.execute(text('SELECT 1'))
-        return "Conexão com o banco de dados funcionando!"
-    except Exception as e:
-        return f"Erro ao conectar ao banco de dados: {e}"
+        except Exception as e:
+            raise BadRequest(f"Erro ao deletar usuário: {e}")
 
-def reativar_user(user_id):
-    try:
-        user = get_user(user_id)
+    def test_db(self):
+        try:
+            with db.engine.connect() as connection:
+                connection.execute(text('SELECT 1'))
+            return "Conexão com o banco de dados funcionando!"
+        except Exception as e:
+            return f"Erro ao conectar ao banco de dados: {e}"
+
+    def reativar_user(self, user_id):
+        try:
+            user = self.get_user(user_id)
+            
+            user.is_active = True
+            db.session.commit()
+            return user
         
-        user.is_active = True
-        db.session.commit()
-        return user
-    
-    except Exception as e:
-        raise BadRequest(f"Erro ao reativar usuário: {e}")
+        except Exception as e:
+            raise BadRequest(f"Erro ao reativar usuário: {e}")

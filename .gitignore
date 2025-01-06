@@ -3,3 +3,4 @@ estudo_flask_venv/
 __pycache__/
 launch.json/
 .vscode/
+.env
