@@ -4,7 +4,7 @@ from flask import request
 from services.user_service import UserService
 
 
-class UserViewMixin(MethodView):
+class JsonViewMixin(MethodView):
     def __init__(self):
         self.user_service = UserService()
 
