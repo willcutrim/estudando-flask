@@ -1,7 +1,6 @@
 from config.database import db
-from mixins.serializer_mixin import SerializeMixin
 
-class User(db.Model, SerializeMixin):
+class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -28,7 +27,7 @@ class User(db.Model, SerializeMixin):
         return f"<User {self.username}>"
 
 
-class Address(db.Model, SerializeMixin):
+class Address(db.Model):
     __tablename__ = 'address'
 
     id = db.Column(db.Integer, primary_key=True)

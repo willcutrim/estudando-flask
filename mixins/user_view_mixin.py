@@ -7,6 +7,7 @@ from services.user_service import UserService
 class JsonViewMixin(MethodView):
     def __init__(self):
         self.user_service = UserService()
+        self.validation = None
 
     def post(self):
         if not request.is_json:

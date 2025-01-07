@@ -1,4 +1,8 @@
 class SerializeMixin:
+
+    """
+        Willyam cutrim - Criado para serializar qualquer modelo, mas o Schema nesse momento resolveu meu problema
+    """
     def to_dict(self, visited=None):
         if visited is None:
             visited = set()
